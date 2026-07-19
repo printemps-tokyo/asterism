@@ -1,0 +1,11 @@
+# Built binaries
+/asterism
+/dist/
+
+# Test and coverage artifacts
+*.out
+*.test
+
+# OS / editor cruft
+.DS_Store
+*.log
