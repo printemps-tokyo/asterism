@@ -121,3 +121,33 @@ func TestBrightestStar(t *testing.T) {
 		t.Errorf("Orion brightest = %q (mag %g), want Rigel", b.Name, b.Mag)
 	}
 }
+
+func TestCatalogHasAll88WithUniqueNames(t *testing.T) {
+	if len(catalog) != 88 {
+		t.Fatalf("catalog has %d constellations, want the 88 IAU ones", len(catalog))
+	}
+	seen := map[string]string{}
+	for _, c := range catalog {
+		for _, key := range []string{normalize(c.Latin), normalize(c.Abbr), normalize(c.Common)} {
+			if other, dup := seen[key]; dup && other != c.Latin {
+				t.Errorf("%q is used by both %s and %s", key, other, c.Latin)
+			}
+			seen[key] = c.Latin
+		}
+		if len(c.Lines) == 0 {
+			t.Errorf("%s has no figure lines", c.Latin)
+		}
+		names := map[string]bool{}
+		for _, s := range c.Stars {
+			if s.Name != "" && names[s.Name] {
+				t.Errorf("%s labels two stars %q", c.Latin, s.Name)
+			}
+			names[s.Name] = true
+		}
+	}
+	for _, q := range []string{"serpens", "ser", "corona australis", "the water bearer", "hercules"} {
+		if _, ok := Lookup(q); !ok {
+			t.Errorf("Lookup(%q) failed", q)
+		}
+	}
+}

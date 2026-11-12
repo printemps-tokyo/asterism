@@ -486,7 +486,17 @@ var catalog = []Constellation{
 	},
 }
 
-// Catalog returns all constellations in catalog order.
+// curated is the hand-curated part of the catalog, above; generated (in
+// catalog_gen.go) holds the rest of the 88 IAU constellations.
+var curated = catalog
+
+func init() {
+	catalog = append(append([]Constellation{}, curated...), generated...)
+	sort.SliceStable(catalog, func(i, j int) bool { return catalog[i].Latin < catalog[j].Latin })
+}
+
+// Catalog returns all constellations in catalog order (alphabetical by
+// Latin name).
 func Catalog() []Constellation {
 	out := make([]Constellation, len(catalog))
 	copy(out, catalog)
